@@ -1,5 +1,6 @@
 package cn.wyu.mybatis.binding;
 
+import cn.hutool.core.lang.ClassScanner;
 import cn.wyu.mybatis.session.SqlSession;
 
 import java.util.HashMap;
@@ -28,19 +29,22 @@ public class MapperRegistry {
     public <T> void addMapper(Class<T> type) {
         /* Mapper 必须是接口才会注册 */
         if (type.isInterface()) {
-//            if (hasMapper(type)) {
-//                // 如果重复添加了，报错
-//                throw new RuntimeException("Type " + type + " is already known to the MapperRegistry.");
-//            }
+            if (hasMapper(type)) {
+                // 如果重复添加了，报错
+                throw new RuntimeException("Type " + type + " is already known to the MapperRegistry.");
+            }
             // 注册映射器代理工厂
             knowMappers.put(type, new MapperProxyFactory<>(type));
         }
     }
 
-//    public void addMappers(String packageName) {
-//        Set<Class<?>> mapperSet = ClassScanner.scanPackage(packageName);
-//        for (Class<?> mapperClass : mapperSet) {
-//            addMapper(mapperClass);
-//        }
-//    }
+    public <T> boolean hasMapper(Class<T> type) {
+        return knowMappers.containsKey(type);
+    }
+    public void addMappers(String packageName) {
+        Set<Class<?>> mapperSet = ClassScanner.scanPackage(packageName);
+        for (Class<?> mapperClass : mapperSet) {
+            addMapper(mapperClass);
+        }
+    }
 }

@@ -5,7 +5,6 @@ import cn.wyu.mybatis.session.SqlSession;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
@@ -24,8 +23,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
             return method.invoke(this, args);
         }else {
 //            return "你被代理了"+ sqlSession.get(mapperInterface.getName() + "." + method.getName());
-            Object invoke = method.invoke(proxy, args);
-            return invoke;
+            return sqlSession.selectOne(method.getName(), args);
         }
     }
 }
